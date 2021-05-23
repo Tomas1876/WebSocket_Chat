@@ -23,7 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 @ServerEndpoint(value="/echo.do")
 public class WebSocketChat {
     
-    private static final List<Session> sessionList=new ArrayList<Session>();;
+    private static final List<Session> sessionList = new ArrayList<Session>();
     private static final Logger logger = LoggerFactory.getLogger(WebSocketChat.class);
     public WebSocketChat() {
         // TODO Auto-generated constructor stub
@@ -35,7 +35,8 @@ public class WebSocketChat {
         logger.info("Open session id:"+session.getId());
         try {
             final Basic basic=session.getBasicRemote();
-            basic.sendText(session.getId() + "님이 입장하셨습니다.");
+            System.out.println(session.getId());
+            basic.sendText("["+session.getId() + "님이 입장하셨습니다]");
         }catch (Exception e) {
             // TODO: handle exception
             System.out.println(e.getMessage());
@@ -43,7 +44,7 @@ public class WebSocketChat {
         sessionList.add(session);
     }
     
-    /*
+    /* 모든 사용자에게 메시지 전송
      * @param self
      * @param sender
      * @param message
