@@ -4,24 +4,100 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<!--  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
+
+<!-- 모달 때문에 부트스트랩 필요 -->
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+<!-- 제이쿼리 -->
 <script  src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
 <title>Simple Chat</title>
 </head>
 <body>
+<div id="wrap" style="margin:20px auto; width:80%;">
     <div>
-        <button type="button" onclick="openSocket();">대화방 참여</button>
-        <button type="button" onclick="closeSocket();">대회방 나가기</button>
+        <button type="button" onclick="openSocket();"class="btn btn-primary">대화방 참여</button>
+        <button type="button" onclick="closeSocket();"class="btn btn-secondary">대회방 나가기</button>
+        <button type="button" onclick="javascript:clearText();" class="btn btn-danger">대화내용 지우기</button>
+        <button type="button" onclick="modal();" class="btn btn-primary">대화내용 내보내기</button>
+        <button type="button" onclick="importText();" class="btn btn-primary">대화내용 불러오기</button>
     	<br/><br/><br/>
   		메세지 입력 : 
         <input type="text" id="sender" value="${sessionScope.id}" style="display: none;">
         <input type="text" id="messageinput">
-        <button type="button" onclick="send();">메세지 전송</button>
-        <button type="button" onclick="javascript:clearText();">대화내용 지우기</button>
-        <button type="button" onclick="exportText();">대화내용 내보내기</button>
+        <button type="button" onclick="send();" class="btn btn-primary">메세지 전송</button>
+        
     </div>
     <!-- Server responses get written here -->
     <div id="messages">
     </div>
+    
+    <!--  Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel" >대화내용 내보내기</h5>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        대화내용을 내보내면 현재 대화창에서 삭제됩니다. 대화 내용을 내보내시겠습니까?
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-primary" onclick="exportText();">내보내기</button>
+       	<button type="button" class="btn btn-secondary" onclick="exmodal();">취소하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel" >대화내용 내보내기</h5>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        대화내용을 저장했습니다.
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-primary" onclick="exmodal();">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="failModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel" >대화내용 내보내기</h5>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        대화내용을 저장하지 못했습니다.
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-primary" onclick="exmodal();">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- wrap end -->
+</div>
+    
     <!-- websocket javascript -->
     <script type="text/javascript">
         var ws;
@@ -37,8 +113,10 @@
             
             //웹소켓 객체 만드는 코드
             //localhost 앞의 ws는 웹소켓을 호출할 때 쓰는 특수 프로토콜
-            //ws = new WebSocket("ws://localhost:8090/echo.do");
-            ws = new WebSocket("ws://172.30.1.15:8090/echo.do");
+            ws = new WebSocket("ws://localhost:8090/echo.do");
+            //ws = new WebSocket("ws://192.168.0.9:8090/echo.do");
+            //본인 아이피 맞게 설정
+            
             /*
             	웹소켓이 정상적으로 생성됐을 때 네 가지 이벤트를 사용할 수 있다
             	open : 커넥션을 만듦
@@ -71,14 +149,12 @@
             }
             
         }
+
         
         function send(){
            // var text=document.getElementById("messageinput").value+","+document.getElementById("sender").value;
             var text = document.getElementById("messageinput").value+","+document.getElementById("sender").value;
             ws.send(text);
-            let id = "${sessionScope.id} : ";
-            let space = "\r\n";
-            marray.push(id + document.getElementById("messageinput").value + space);
             text = "";
         }
         
@@ -86,23 +162,44 @@
             ws.close();
         }
         
+        let space = "\r\n";
         function writeResponse(text){
             messages.innerHTML += "<br/>"+text;
+            marray.push(text + space);
         }
 
         function clearText(){
-            console.log(messages.parentNode);
-            messages.parentNode.removeChild(messages)
+
+        	console.log(messages.parentNode);
+            messages.parentNode.removeChild(messages);
+            //$("#messages").remove();
+
+            
       	}
         
+        function modal(){
+        	$('#exportModal').modal('show');
+        }
+        
+        function exmodal(){
+        	$('#exportModal').modal('hide');
+        	$('#successModal').modal('hide');
+        	$('#failModal').modal('hide');
+        }
+        
+        
+        
         function exportText(){
+        	//$('#exportModal').modal('hide');
         	
         	let messages = $("#messages").text();
         	let div = $("#messages").children();
         	
-        	console.log(marray);
+        	console.log(messages);
         	console.log("대화내용 내보내기");
         	
+        	//$(".modal-body").empty();
+        	//$(".modal-footer").empty();
         	$.ajax({
         		url:"export.ajax",
         		type:"post",
@@ -112,9 +209,18 @@
         		success:function(result){
         			let msg = result.trim();
         			if(msg == "true"){
-        				alert("대화를 저장했습니다.");
+        				$('#exportModal').modal('hide');
+        				$('#successModal').modal('show');
+        				//$(".modal-body").append("대화를 저장했습니다.");
+        				//$(".modal-footer").append('<button type="button" class="btn btn-primary" onclick="exmodal();">닫기</button>');
+        				//alert("대화를 저장했습니다.");
+        				$("#messages").empty();
         			} else{
-        				alert("대화를 저장하지 못했습니다.");
+        				//$(".modal-body").append("대화를 저장하지 못했습니다.");
+        				//$(".modal-footer").append('<button type="button" class="btn btn-primary" onclick="exmodal();">닫기</button>');
+        				//alert("대화를 저장하지 못했습니다.");
+        				$('#exportModal').modal('hide');
+        				$('#failModal').modal('show');
         			}
         		},
         		error:function(xhr){
@@ -122,6 +228,11 @@
         		}
         	})
         	
+        }
+        
+        function importText(){
+        	console.log("대화내용 불러오기");
+        	alert("<p>야호</p>");
         }
         
   </script>
