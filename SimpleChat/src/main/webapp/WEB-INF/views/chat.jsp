@@ -23,17 +23,19 @@
     <div>
         <button type="button" onclick="openSocket();"class="btn btn-primary">대화방 참여</button>
         <button type="button" onclick="closeSocket();"class="btn btn-secondary">대회방 나가기</button>
-        <button type="button" onclick="javascript:clearText();" class="btn btn-danger">대화내용 지우기</button>
+        <button type="button" onclick="clearText();" class="btn btn-danger">대화내용 지우기</button>
         <button type="button" onclick="modal();" class="btn btn-primary">대화내용 내보내기</button>
-        <button type="button" onclick="importText();" class="btn btn-primary">대화내용 불러오기</button>
+        <button type="button" onclick="chatlist();" class="btn btn-primary">대화내용 불러오기</button>
     	<br/><br/><br/>
   		메세지 입력 : 
         <input type="text" id="sender" value="${sessionScope.id}" style="display: none;">
-        <input type="text" id="messageinput">
+        <input type="text" id="messageinput" onkeypress="if( event.keyCode == 13 ){send();}">
         <button type="button" onclick="send();" class="btn btn-primary">메세지 전송</button>
         
     </div>
     <!-- Server responses get written here -->
+    <div id="importarea">
+    </div>
     <div id="messages">
     </div>
     
@@ -47,7 +49,7 @@
         </button>
       </div>
       <div class="modal-body">
-        대화내용을 내보내면 현재 대화창에서 삭제됩니다. 대화 내용을 내보내시겠습니까?
+        현재까지의 대화 내용을 내보내시겠습니까?
       </div>
       <div class="modal-footer">
       	<button type="button" class="btn btn-primary" onclick="exportText();">내보내기</button>
@@ -94,6 +96,27 @@
 </div>
 
 
+<div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel" >대화내용 내보내기</h5>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        대화내용을 불러오면 기존의 대화내용은 모두 삭제됩니다.
+        이전 대화내용을 불러오시겠습니까?
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-primary" onclick="importText();">불러오기</button>
+      	<button type="button" class="btn btn-primary" onclick="exmodal();">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <!-- wrap end -->
 </div>
@@ -103,19 +126,27 @@
         var ws;
         var messages = document.getElementById("messages");
         let marray = [];
+        let space = "\r\n";
         
         function openSocket(){
+        	
+        	
+        
             if(ws !== undefined && ws.readyState !== WebSocket.CLOSED ){
                 writeResponse("이미 입장하셨습니다.");
                 return;
+            } else{
+            	writeResponse("${sessionScope.id}님이 입장하셨습니다.");
             }
             
             
             //웹소켓 객체 만드는 코드
             //localhost 앞의 ws는 웹소켓을 호출할 때 쓰는 특수 프로토콜
-            ws = new WebSocket("ws://localhost:8090/echo.do");
-            //ws = new WebSocket("ws://192.168.0.9:8090/echo.do");
+            //ws = new WebSocket("ws://localhost:8090/echo.do");
+            ws = new WebSocket("ws://192.168.2.10:8090/echo.do");
             //본인 아이피 맞게 설정
+            
+            //$("messageinput").focus();
             
             /*
             	웹소켓이 정상적으로 생성됐을 때 네 가지 이벤트를 사용할 수 있다
@@ -155,14 +186,14 @@
            // var text=document.getElementById("messageinput").value+","+document.getElementById("sender").value;
             var text = document.getElementById("messageinput").value+","+document.getElementById("sender").value;
             ws.send(text);
-            text = "";
+            $("#messageinput").val("");
         }
         
         function closeSocket(){
             ws.close();
         }
         
-        let space = "\r\n";
+        
         function writeResponse(text){
             messages.innerHTML += "<br/>"+text;
             marray.push(text + space);
@@ -170,9 +201,10 @@
 
         function clearText(){
 
-        	console.log(messages.parentNode);
-            messages.parentNode.removeChild(messages);
-            //$("#messages").remove();
+        	//console.log(messages.parentNode);
+            //messages.parentNode.removeChild(messages);
+            $("#messages").empty();
+            $("#importarea").empty();
 
             
       	}
@@ -182,11 +214,41 @@
         }
         
         function exmodal(){
+        	$('#importModal').modal('hide');
         	$('#exportModal').modal('hide');
         	$('#successModal').modal('hide');
         	$('#failModal').modal('hide');
         }
         
+        function chatlist(){
+        	
+        	$("#importModal").modal('show');
+        	
+        	console.log("대화 리스트 뽑기");
+        	
+			$.ajax({
+        		
+        		url:"chatlist.ajax",
+        		type:"post",
+        		data:{ id:$("#sender").val() },
+        		dataType:"json",
+        		traditional:true,
+        		success:function(responsedata){
+        			
+        			console.log("리스트 불러옴");
+        			console.log(responsedata);
+
+		
+        		},
+        		error:function(xhr){
+        			console.log(xhr);
+        		}
+        		
+        		
+        	})
+        	
+        	
+        }
         
         
         function exportText(){
@@ -203,7 +265,10 @@
         	$.ajax({
         		url:"export.ajax",
         		type:"post",
-        		data:{marray : marray},
+        		data:{
+        			id:"${sessionScope.id}",
+        			marray : marray
+        			},
         		dataType:"text",
         		traditional:true,
         		success:function(result){
@@ -211,14 +276,10 @@
         			if(msg == "true"){
         				$('#exportModal').modal('hide');
         				$('#successModal').modal('show');
-        				//$(".modal-body").append("대화를 저장했습니다.");
-        				//$(".modal-footer").append('<button type="button" class="btn btn-primary" onclick="exmodal();">닫기</button>');
-        				//alert("대화를 저장했습니다.");
-        				$("#messages").empty();
+        				//$("#importarea").empty();
+        				//$("#messages").empty();
         			} else{
-        				//$(".modal-body").append("대화를 저장하지 못했습니다.");
-        				//$(".modal-footer").append('<button type="button" class="btn btn-primary" onclick="exmodal();">닫기</button>');
-        				//alert("대화를 저장하지 못했습니다.");
+       
         				$('#exportModal').modal('hide');
         				$('#failModal').modal('show');
         			}
@@ -232,7 +293,42 @@
         
         function importText(){
         	console.log("대화내용 불러오기");
-        	alert("<p>야호</p>");
+        	
+        	$.ajax({
+        		
+        		url:"import.ajax",
+        		type:"post",
+        		data:{ id:$("#sender").val() },
+        		dataType:"json",
+        		traditional:true,
+        		success:function(responsedata){
+        			
+        			console.log(responsedata);
+        			
+        			$('#importModal').modal('hide');
+        			$("#messages").empty();
+        			$("#importarea").empty();
+        			let chat = responsedata
+
+        			$.each(chat, function(index,item){
+        				
+        				console.log("each문이 도나요?");
+        				marray.push(chat[index] + space);
+        				
+        				$("#importarea").append(    					
+        						"<br/>" + chat[index]
+        						
+        				);
+        				
+        			});
+		
+        		},
+        		error:function(xhr){
+        			console.log(xhr);
+        		}
+        		
+        		
+        	})
         }
         
   </script>

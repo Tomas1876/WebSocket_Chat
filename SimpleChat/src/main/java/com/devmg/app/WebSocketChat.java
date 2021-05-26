@@ -32,11 +32,16 @@ public class WebSocketChat {
     
     @OnOpen
     public void onOpen(Session session) {
+    	//HttpServletRequest request, 
+    	//String id = request.getParameter("id");
+    	
         logger.info("Open session id:"+session.getId());
+    	//logger.info("Open session id:"+id);
         try {
             final Basic basic=session.getBasicRemote();
-            System.out.println(session.getId());
-            basic.sendText("["+session.getId() + "님이 입장하셨습니다]");
+            //System.out.println(id);
+           // basic.sendText("["+session.getId() + "님이 입장하셨습니다]");
+            //basic.sendText("["+id + "님이 입장하셨습니다]");
         }catch (Exception e) {
             // TODO: handle exception
             System.out.println(e.getMessage());

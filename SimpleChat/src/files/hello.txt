@@ -1,0 +1,20 @@
+[7님이 입장하셨습니다]
+hello : 안녕하세요
+admin : 안녕하세요
+hello : 스프링 좀 어때요?
+admin : 거지같죠^^
+admin : 하하하...
+hello : 아...
+hello : 힘내세요
+admin : 감사합니다..
+admin : 헬로님은 뭐 하시나요?
+hello : 저 파이어베이스요
+admin : 오 파베!
+admin : 할만해요?
+hello : 예?
+hello : ㅎ
+hello : ㅎㅎㅎ
+hello : ㅎㅎㅎㅎㅎㅎㅎㅎ
+admin : 아.....
+admin : ㅠㅠㅠㅠㅠㅠ
+hello : ㅋ....

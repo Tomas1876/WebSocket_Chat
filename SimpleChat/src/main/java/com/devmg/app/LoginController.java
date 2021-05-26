@@ -31,6 +31,11 @@ public class LoginController {
 		return "login";
 	}
 	
+	@RequestMapping(value = "/chatrooms.do", method = RequestMethod.GET)
+	public String chatrooms() {
+		return "chatrooms";
+	}
+	
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
