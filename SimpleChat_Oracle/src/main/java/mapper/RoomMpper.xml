@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.RoomDao">
+	
+	<select id="getRooms" resultType="dto.Room">
+		select roomname from room group by roomname
+	</select>
+	
+	<insert id="createRoom" parameterType="dto.Room">
+	
+		insert into room (roomno, roomname) values(room_seq.nextval,#{roomname})
+	
+	</insert>
+	
+	<delete id="deleteRoom">
+	
+		delete from room where roomname=#{roonmae}
+	
+	</delete>
+	
+</mapper>
