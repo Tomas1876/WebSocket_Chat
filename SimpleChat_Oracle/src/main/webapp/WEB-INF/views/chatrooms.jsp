@@ -20,7 +20,38 @@
 
 <!-- 제이쿼리 -->
 <script  src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<style>
 
+#rooms{
+	margin-top: 30px;
+}
+.chatroom{
+	display:flex;
+	align-item:middle;
+}
+
+.chatroom > p {
+	font-size : 2rem;
+	font-family:arial;
+	margin-top:10px 10px;
+}
+
+.chatroom > button {
+	height:30px;
+	font-size : 0.5rem;
+	margin-left:10px;
+
+}
+
+.chatroom::before{
+
+	content:"::";
+	margin-right:10px;
+	font-size : 1.5rem;
+	font-family:arial;
+
+}
+</style>
 <title>Simple Chat</title>
 </head>
 <body>
@@ -29,68 +60,13 @@
         
         <input type="text" id="roomname"onkeypress="if( event.keyCode == 13 ){makeroom();}"/>
         <button type="button" onclick="makeroom();"class="btn btn-primary">대화방 만들기</button>
-        
-        <!-- 
-        <button type="button" onclick="openSocket();"class="btn btn-primary">대화방 참여</button>
-        <button type="button" onclick="closeSocket();"class="btn btn-secondary">대회방 나가기</button>
-        <button type="button" onclick="clearText();" class="btn btn-danger">대화내용 지우기</button>
-        <button type="button" onclick="modal();" class="btn btn-primary">대화내용 내보내기</button>
-        <button type="button" onclick="chatlist();" class="btn btn-primary">대화내용 불러오기</button>
-    	<br/><br/><br/>
-  		메세지 입력 : 
-        <input type="text" id="sender" value="${sessionScope.id}" style="display: none;">
-        <input type="text" id="messageinput" onkeypress="if( event.keyCode == 13 ){send();}">
-        <button type="button" onclick="send();" class="btn btn-primary">메세지 전송</button>
-         -->
+       
          <div id="rooms">
          
          
          
          </div>
     </div>
-    <!-- Server responses get written here -->
-    <div id="importarea">
-    </div>
-    <div id="messages">
-    </div>
-    
-    <!--  Modal -->
-<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel" >대화내용 내보내기</h5>
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        현재까지의 대화 내용을 내보내시겠습니까?
-      </div>
-      <div class="modal-footer">
-      	<button type="button" class="btn btn-primary" onclick="exportText();">내보내기</button>
-       	<button type="button" class="btn btn-secondary" onclick="exmodal();">취소하기</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel" >대화내용 내보내기</h5>
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        대화내용을 저장했습니다.
-      </div>
-      <div class="modal-footer">
-      	<button type="button" class="btn btn-primary" onclick="exmodal();">닫기</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 <!-- wrap end -->
@@ -126,8 +102,8 @@
     				
     				$("#rooms").append(
     						   						
-    						"<div id='"+item.roomname+"' class='chatroom'><h1 onclick='enterRoom(this)'>"+item.roomname+"</h1>"
-    						+"<button type='button' onclick='deleteRoom(this)'>삭제하기</button></div>"
+    						"<div id='"+item.roomname+"' class='chatroom'><p onclick='enterRoom(this)'>"+item.roomname+"</p>"
+    						+"<button type='button' onclick='deleteRoom(this)' class='btn btn-secondary'>삭제하기</button></div>"
     						
     				);
     				
@@ -170,8 +146,8 @@
     			if(result === "success"){
     				$("#rooms").append(
 	   						
-    						"<div id='"+roomname+"' class='chatroom'><h1 onclick='enterRoom(this)'>"+roomname+"</h1>"
-    						+"<button type='button' onclick='deleteRoom(this)'>삭제하기</button></div>"					
+    						"<div id='"+roomname+"' class='chatroom'><p onclick='enterRoom(this)'>"+roomname+"</p>"
+    						+"<button type='button' onclick='deleteRoom(this)' class='btn btn-secondary'>삭제하기</button></div>"					
     				);
     			} else{
     				
@@ -181,6 +157,7 @@
     			
     		},
     		error:function(xhr){
+    			alert("방 생성에 실패했습니다");
     			console.log(xhr);
     		}
     		
@@ -241,7 +218,6 @@
     	
     }
     
-    //대화방 입장(동기)
   </script>
 </body>
 </html>

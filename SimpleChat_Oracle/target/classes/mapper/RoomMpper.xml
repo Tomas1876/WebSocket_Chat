@@ -3,7 +3,7 @@
 <mapper namespace="dao.RoomDao">
 	
 	<select id="getRooms" resultType="dto.Room">
-		select roomname from room group by roomname
+		select roomname, roomno from room
 	</select>
 	
 	<insert id="createRoom" parameterType="dto.Room">

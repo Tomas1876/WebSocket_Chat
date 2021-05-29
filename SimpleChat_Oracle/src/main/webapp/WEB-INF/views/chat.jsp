@@ -22,11 +22,11 @@
 <div id="wrap" style="margin:20px auto; width:80%;">
 
 	<div id="namespace">
-	<p>${roomname}에 입장하셨습니다.</p>
+	<p>${roomname}에 오신 것을 환영합니다.</p>
 	</div>
 
     <div>
-        <button type="button" onclick="openSocket();"class="btn btn-primary">대화방 참여</button>
+        <!-- <button type="button" onclick="openSocket();"class="btn btn-primary">대화방 참여</button> -->
         <button type="button" onclick="closeSocket();"class="btn btn-secondary">대회방 나가기</button>
         <button type="button" onclick="clearText();" class="btn btn-danger">대화내용 지우기</button>
         <button type="button" onclick="modal();" class="btn btn-primary">대화내용 내보내기</button>
@@ -128,6 +128,10 @@
     
     <!-- websocket javascript -->
     <script type="text/javascript">
+    
+    $(document).ready(function() {
+    	openSocket();
+    });
         var ws;
         var messages = document.getElementById("messages");
         let marray = [];
@@ -148,8 +152,7 @@
             //웹소켓 객체 만드는 코드
             //localhost 앞의 ws는 웹소켓을 호출할 때 쓰는 특수 프로토콜
             //서버로 요청 보내는 프로토콜
-            //ws = new WebSocket("ws://localhost:8090/echo.do");
-            ws = new WebSocket("ws://192.168.2.10:8090/echo.do");
+           	ws = new WebSocket("ws://localhost:8090/echo.do");
             //본인 아이피 맞게 설정
             
             // /echo.do라는 주소로 요청이 들어가면
@@ -193,7 +196,7 @@
 
         
         function send(){
-           // var text=document.getElementById("messageinput").value+","+document.getElementById("sender").value;
+
             var text = document.getElementById("messageinput").value+","+document.getElementById("sender").value;
             ws.send(text);
             $("#messageinput").val("");
@@ -201,6 +204,7 @@
         
         function closeSocket(){
             ws.close();
+            //location.href="/chatrooms.do";
         }
         
         
@@ -211,8 +215,6 @@
 
         function clearText(){
 
-        	//console.log(messages.parentNode);
-            //messages.parentNode.removeChild(messages);
             $("#messages").empty();
             $("#importarea").empty();
 
@@ -262,7 +264,7 @@
         
         
         function exportText(){
-        	//$('#exportModal').modal('hide');
+
         	
         	let messages = $("#messages").text();
         	let div = $("#messages").children();
@@ -270,8 +272,6 @@
         	console.log(messages);
         	console.log("대화내용 내보내기");
         	
-        	//$(".modal-body").empty();
-        	//$(".modal-footer").empty();
         	$.ajax({
         		url:"export.ajax",
         		type:"post",
@@ -286,8 +286,7 @@
         			if(msg == "true"){
         				$('#exportModal').modal('hide');
         				$('#successModal').modal('show');
-        				//$("#importarea").empty();
-        				//$("#messages").empty();
+
         			} else{
        
         				$('#exportModal').modal('hide');

@@ -20,28 +20,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+
+//이 어노테이션을 설정하면 이 클래스가 웹소켓 요청을 받는 endpoint가 된다
+//이제 ws://localhost:8090/echo.do 같은 주소로 접근할 수 있다
+//클라이언트는 요청을 받지 않기 때문에 이런 endpoint 결로는 서버만 필요
 @ServerEndpoint(value="/echo.do")
 public class WebSocketChat {
     
     private static final List<Session> sessionList = new ArrayList<Session>();
     private static final Logger logger = LoggerFactory.getLogger(WebSocketChat.class);
+    
+    //Controller 어노테이션 때문에 자동으로 객체 생성
     public WebSocketChat() {
-        // TODO Auto-generated constructor stub
-        System.out.println("웹소켓 생성");
+
     }
     
+    //웹소켓이 연결되었을 때 호출
     @OnOpen
     public void onOpen(Session session) {
-    	//HttpServletRequest request, 
-    	//String id = request.getParameter("id");
-    	
+  	
         logger.info("Open session id:"+session.getId());
-    	//logger.info("Open session id:"+id);
+
         try {
             final Basic basic=session.getBasicRemote();
-            //System.out.println(id);
-           // basic.sendText("["+session.getId() + "님이 입장하셨습니다]");
-            //basic.sendText("["+id + "님이 입장하셨습니다]");
+
         }catch (Exception e) {
             // TODO: handle exception
             System.out.println(e.getMessage());
@@ -68,10 +70,9 @@ public class WebSocketChat {
         }
     }
     
-    /*
-     * @param message
-     * @param session
-     */
+    
+    // endpoint가 메시지를 수신하면 호출되는 메서드
+    // 메시지를 수산만 한다
     @OnMessage
     public void onMessage(String message,Session session) {
     	
@@ -80,8 +81,10 @@ public class WebSocketChat {
     	
         logger.info("Message From "+sender + ": "+message);
         try {
+        					// session.getBasicRemote는 메시지를 보내는데 사용한다
             final Basic basic=session.getBasicRemote();
             basic.sendText(sender + " : "+message);
+            
         }catch (Exception e) {
             // TODO: handle exception
             System.out.println(e.getMessage());
@@ -89,14 +92,16 @@ public class WebSocketChat {
         sendAllSessionToMessage(session, sender, message);
     }
     
+    // 연결 에러 발생시 호출되는 메서드
     @OnError
     public void onError(Throwable e,Session session) {
-        
+        e.printStackTrace();
     }
     
+    //연결 종료시 호출되는 메서드
     @OnClose
     public void onClose(Session session) {
-        logger.info("Session "+session.getId()+" has ended");
+
         sessionList.remove(session);
     }
 }

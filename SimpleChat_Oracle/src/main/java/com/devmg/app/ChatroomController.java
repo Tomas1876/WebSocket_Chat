@@ -27,19 +27,6 @@ public class ChatroomController {
 		this.sqlsession = sqlsession;
 	}	
 	
-	/*
-	  
-	 예시) Http  method 종류
-	GET        ( /board/100 )       >> 100번 게시물 조회
-	POST     ( /board  + 데이터)      >> 게시물 등록
-	DELETE ( /board/100)            >> 100게시물 삭제
-	PUT       ( /board/100 + 데이터   >> 100번 게시물 수정
-	PATCH   ( /board/100 + 데이터     >> 100번 게시물 수정
-		-->> uri 값이 같아도 메서드 종류에 따라 의미가 달라짐 
-	 
-	 */
-	
-	
 	//대화방 목록 불러오기
 	@RequestMapping(value="", method = RequestMethod.GET)
 	public List<Room> getRooms(){
