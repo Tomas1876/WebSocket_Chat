@@ -153,16 +153,17 @@
             //localhost 앞의 ws는 웹소켓을 호출할 때 쓰는 특수 프로토콜
             //서버로 요청 보내는 프로토콜
            	ws = new WebSocket("ws://localhost:8090/echo.do");
-            //본인 아이피 맞게 설정
             
-            // /echo.do라는 주소로 요청이 들어가면
-            // /echo.do를 엔드포인트로 잡는 컨트롤러가 이 요청을 잡고
-            // 웹소켓이 생성되어 이 기능을 자바스크립트로 리턴한다
+           	//echo.do 주소로 요청이 들어가면
+           	//echo.do를 @ServerEndpoint(value="/echo.do")
+           	//어노테이션이 붙은 WebSocketChat이 이 요청을 잡고
+           	//클라이언트와 서버가 연결된다.
+
             
 
             
             /*
-            	웹소켓이 정상적으로 생성됐을 때 네 가지 이벤트를 사용할 수 있다
+            	웹소켓이은 크게 이벤트를 사용할 수 있다
             	open : 커넥션을 만듦
             	message : 데이터를 받음
             	error : 웹소켓 에러
@@ -180,7 +181,7 @@
 
             };
             
-            //서버에서 메시지 수신할 때 호출
+            //서버에서 클라이언트로 메시지가 왔을 때 호출
             ws.onmessage = function(event){
                 console.log('writeResponse');
                 console.log(event.data)
@@ -198,6 +199,8 @@
         function send(){
 
             var text = document.getElementById("messageinput").value+","+document.getElementById("sender").value;
+            
+            //send는 웹소켓 객체가 제공하는 메서드로 서버로 데이터를 전송할 수 있다
             ws.send(text);
             $("#messageinput").val("");
         }

@@ -180,13 +180,14 @@
 			<version>4.7</version>
 			<scope>test</scope>
 		</dependency>
-		        
+		
+		<!-- 웹소켓  -->        
 		<dependency>
 		            <groupId>org.springframework</groupId>
 		            <artifactId>spring-websocket</artifactId>
 		            <version>${org.springframework-version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.websocket</groupId>
 			<artifactId>javax.websocket-api</artifactId>

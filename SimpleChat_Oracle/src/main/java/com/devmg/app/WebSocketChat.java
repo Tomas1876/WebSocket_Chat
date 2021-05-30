@@ -1,5 +1,6 @@
 package com.devmg.app;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +10,11 @@ import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
+import javax.websocket.PongMessage;
+import javax.websocket.RemoteEndpoint.Async;
 import javax.websocket.RemoteEndpoint.Basic;
 import javax.websocket.Session;
+import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import org.slf4j.Logger;
@@ -22,7 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 
 //이 어노테이션을 설정하면 이 클래스가 웹소켓 요청을 받는 endpoint가 된다
-//이제 ws://localhost:8090/echo.do 같은 주소로 접근할 수 있다
+//이제 /echo.do 라는 URI로 웹소켓에 접근할 수 있다
 //클라이언트는 요청을 받지 않기 때문에 이런 endpoint 결로는 서버만 필요
 @ServerEndpoint(value="/echo.do")
 public class WebSocketChat {
@@ -32,36 +36,39 @@ public class WebSocketChat {
     
     //Controller 어노테이션 때문에 자동으로 객체 생성
     public WebSocketChat() {
-
+    	System.out.println("WebSocketChat 객체 생성");
     }
     
     //웹소켓이 연결되었을 때 호출
+	// 웹소켓의 Session 객체는 웹의 Session객체와 다르다
+	// 브라우저에서 소켓 접속하면 생성되는 객체로 브라우저가 웹소켓에 접속했을 때의 커넥션 정보가 있다
+	// 여기서 메시지를 꺼낼 수도 있다
     @OnOpen
     public void onOpen(Session session) {
-  	
-        logger.info("Open session id:"+session.getId());
 
         try {
-            final Basic basic=session.getBasicRemote();
-
+        	
+        	final Async acync = session.getAsyncRemote();
+        	
         }catch (Exception e) {
             // TODO: handle exception
             System.out.println(e.getMessage());
         }
-        sessionList.add(session);
+		sessionList.add(session);
+
+		
     }
     
-    /* 모든 사용자에게 메시지 전송
-     * @param self
-     * @param sender
-     * @param message
-     */
+
+    // 다른 사용자들에게 메시지 전송
     private void sendAllSessionToMessage(Session self, String sender, String message) {
     	
         try {
+        	
+        	//세션 리스트에 담긴 세션 정보를 비교해 자신을 제외한 다른 모든 사용자에게 메시지 전송
             for(Session session : WebSocketChat.sessionList) {
                 if(!self.getId().equals(session.getId())) {
-                    session.getBasicRemote().sendText(sender+" : "+message);
+                    session.getAsyncRemote().sendText(sender+" : "+message);
                 }
             }
         }catch (Exception e) {
@@ -71,24 +78,34 @@ public class WebSocketChat {
     }
     
     
-    // endpoint가 메시지를 수신하면 호출되는 메서드
-    // 메시지를 수산만 한다
+    // 웹소켓으로 메시지가 오면 호출되는 함수
     @OnMessage
     public void onMessage(String message,Session session) {
     	
+    	// 클라이언트가 ws.send(data)로 보낸 데이터를 수신한다
+    	//String message = document.getElementById("messageinput").value+","+document.getElementById("sender").value;
     	String sender = message.split(",")[1];
     	message = message.split(",")[0];
     	
         logger.info("Message From "+sender + ": "+message);
+        
+        
         try {
-        					// session.getBasicRemote는 메시지를 보내는데 사용한다
-            final Basic basic=session.getBasicRemote();
-            basic.sendText(sender + " : "+message);
+        	
+        	
+        	//javax.websocket.RemoteEndpoint 인스턴스의 하위 인터페이스 RemoteEndpoint.Async
+        	//웹소켓 메시지를 비동기적으로 보낼 수 있게 해준다
+        	//getAsyncRemote는 세션이 메시지를 받는 지점을 리턴한다
+        	final Async acync = session.getAsyncRemote();
+        	acync.sendText(sender + " : "+message);
+            // 서버에서 클라이언트로 메시지를 보내는 부분
+        	// 이 코드가 없으면 자기자신이 보낸 메시지가 보이지 않는다
             
         }catch (Exception e) {
             // TODO: handle exception
             System.out.println(e.getMessage());
         }
+       
         sendAllSessionToMessage(session, sender, message);
     }
     
