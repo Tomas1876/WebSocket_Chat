@@ -32,8 +32,10 @@
                     </div>
                     <div>
                         <button type="submit" class="form-control btn btn-primary">로그인</button>
+                        
                     </div>
-                </form>
+                </form><!-- 
+              <a href="/chatrooms.do">대화방 목록</a> -->
             </div>
         </div>
     </div>

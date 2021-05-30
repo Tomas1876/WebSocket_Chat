@@ -38,9 +38,6 @@ public class ChattingController {
 		System.out.println("id : " + id);
 		BufferedOutputStream bs = null;
 		
-		//SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMMdd_HHmm");
-		//Date time = new Date();				
-		//String date = sdf.format(time);
 		
 		if(marray != null) {
 			bo = "true";			
@@ -78,44 +75,6 @@ public class ChattingController {
 		
 	}	
 		
-	//해당 유저명 포함하는 파일 목록 불러오기
-	/*
-	 * public static boolean showFile(File file, String id) {
-	 * 
-	 * boolean result = false; //완료여부
-	 * 
-	 * if( file.exists() ) { //복사 원본 파일 존재시
-	 * 
-	 * try{
-	 * 
-	 * BufferedReader reader =
-	 * 
-	 * new BufferedReader(new FileReader(file));
-	 * 
-	 * String txt = "";
-	 * 
-	 * while((txt = reader.readLine()) != null) {
-	 * 
-	 * if(txt.contains(id)) {
-	 * 
-	 * System.out.println(txt);
-	 * 
-	 * } }
-	 * 
-	 * reader.close();
-	 * 
-	 * }catch(Exception e) {
-	 * 
-	 * System.out.println("오류");
-	 * 
-	 * }
-	 * 
-	 * }else { System.out.println("없음"); }
-	 * 
-	 * return result;
-	 * 
-	 * }
-	 */
 
 		@RequestMapping(value="import.ajax", method=RequestMethod.POST)
 		private List<String> importText(String id){

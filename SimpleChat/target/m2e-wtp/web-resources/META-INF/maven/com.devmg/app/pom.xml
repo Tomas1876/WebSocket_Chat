@@ -13,19 +13,83 @@
 		<org.aspectj-version>1.6.10</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
+	 <repositories>
+		<!-- Oracle 사설  저장소 추가 -->
+		<repository>
+		<id>oracle</id>
+		<name>ORACLE JDBC Repository</name>
+		<url>http://maven.jahia.org/maven2</url>
+		</repository>
+	</repositories>
 	<dependencies>
+	<!-- lombok -->
+	<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>1.18.12</version>
+		    <scope>provided</scope>
+		</dependency>
+	<!-- Oracle 추가 -->
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc6</artifactId>
+			<version>12.1.0.1</version>
+			<scope>runtime</scope>
+		</dependency>
+		
+				<!--  Mybatis 작업  -->
+		<dependency>
+  			<groupId>org.mybatis</groupId>
+  			<artifactId>mybatis</artifactId>
+  			<version>3.5.3</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.mybatis</groupId>
+  			<artifactId>mybatis-spring</artifactId>
+  			<version>2.0.1</version>
+  		</dependency>		
+  		
 		<!-- Spring -->
+		<!--  Spring 기본 설정(기본 , JDBC , Web)-->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>${org.springframework-version}</version>
-			<exclusions>
-				<!-- Exclude Commons Logging in favor of SLF4j -->
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				 </exclusion>
-			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-expression</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${org.springframework-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -116,13 +180,14 @@
 			<version>4.7</version>
 			<scope>test</scope>
 		</dependency>
-		        
+		
+		<!-- 웹소켓  -->        
 		<dependency>
 		            <groupId>org.springframework</groupId>
 		            <artifactId>spring-websocket</artifactId>
 		            <version>${org.springframework-version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.websocket</groupId>
 			<artifactId>javax.websocket-api</artifactId>
@@ -130,12 +195,22 @@
 		</dependency>
 		
     <!-- restcontroller json -->
-    <dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-databind</artifactId>
-    <version>2.9.7</version>
-</dependency>
-
+   <!-- Jackson for JSON -->
+   		<dependency>
+	    		<groupId>com.fasterxml.jackson.core</groupId>
+	    		<artifactId>jackson-core</artifactId>
+	    		<version>2.9.6</version>
+		</dependency>
+		<dependency>
+	    		<groupId>org.codehaus.jackson</groupId>
+	    		<artifactId>jackson-core-asl</artifactId>
+	    		<version>1.9.13</version>
+		</dependency>
+		<dependency>
+	    		<groupId>com.fasterxml.jackson.core</groupId>
+	    		<artifactId>jackson-databind</artifactId>
+	    		<version>2.7.3</version>
+		</dependency>
 
 <dependency>
     <groupId>com.google.auto.value</groupId>

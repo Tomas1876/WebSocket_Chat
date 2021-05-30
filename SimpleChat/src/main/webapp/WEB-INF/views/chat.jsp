@@ -20,8 +20,13 @@
 </head>
 <body>
 <div id="wrap" style="margin:20px auto; width:80%;">
+
+	<div id="namespace">
+	<p>${roomname}에 오신 것을 환영합니다.</p>
+	</div>
+
     <div>
-        <button type="button" onclick="openSocket();"class="btn btn-primary">대화방 참여</button>
+        <!-- <button type="button" onclick="openSocket();"class="btn btn-primary">대화방 참여</button> -->
         <button type="button" onclick="closeSocket();"class="btn btn-secondary">대회방 나가기</button>
         <button type="button" onclick="clearText();" class="btn btn-danger">대화내용 지우기</button>
         <button type="button" onclick="modal();" class="btn btn-primary">대화내용 내보내기</button>
@@ -123,6 +128,10 @@
     
     <!-- websocket javascript -->
     <script type="text/javascript">
+    
+    $(document).ready(function() {
+    	openSocket();
+    });
         var ws;
         var messages = document.getElementById("messages");
         let marray = [];
@@ -142,14 +151,15 @@
             
             //웹소켓 객체 만드는 코드
             //localhost 앞의 ws는 웹소켓을 호출할 때 쓰는 특수 프로토콜
-            //ws = new WebSocket("ws://localhost:8090/echo.do");
-            ws = new WebSocket("ws://192.168.2.10:8090/echo.do");
-            //본인 아이피 맞게 설정
-            
-            //$("messageinput").focus();
-            
+            //서버로 요청 보내는 프로토콜
+           	ws = new WebSocket("ws://localhost:8090/echo.do/${roomname}");            
+           	//echo.do 주소로 요청이 들어가면
+           	//echo.do를 @ServerEndpoint(value="/echo.do")
+           	//어노테이션이 붙은 WebSocketChat이 이 요청을 잡고
+           	//클라이언트와 서버가 연결된다.
+    
             /*
-            	웹소켓이 정상적으로 생성됐을 때 네 가지 이벤트를 사용할 수 있다
+            	웹소켓이은 크게 이벤트를 사용할 수 있다
             	open : 커넥션을 만듦
             	message : 데이터를 받음
             	error : 웹소켓 에러
@@ -167,7 +177,7 @@
 
             };
             
-            //서버에서 메시지 수신할 때 호출
+            //서버에서 클라이언트로 메시지가 왔을 때 호출
             ws.onmessage = function(event){
                 console.log('writeResponse');
                 console.log(event.data)
@@ -183,14 +193,17 @@
 
         
         function send(){
-           // var text=document.getElementById("messageinput").value+","+document.getElementById("sender").value;
+
             var text = document.getElementById("messageinput").value+","+document.getElementById("sender").value;
+            
+            //send는 웹소켓 객체가 제공하는 메서드로 서버로 데이터를 전송할 수 있다
             ws.send(text);
             $("#messageinput").val("");
         }
         
         function closeSocket(){
             ws.close();
+            //location.href="/chatrooms.do";
         }
         
         
@@ -201,8 +214,6 @@
 
         function clearText(){
 
-        	//console.log(messages.parentNode);
-            //messages.parentNode.removeChild(messages);
             $("#messages").empty();
             $("#importarea").empty();
 
@@ -252,7 +263,7 @@
         
         
         function exportText(){
-        	//$('#exportModal').modal('hide');
+
         	
         	let messages = $("#messages").text();
         	let div = $("#messages").children();
@@ -260,8 +271,6 @@
         	console.log(messages);
         	console.log("대화내용 내보내기");
         	
-        	//$(".modal-body").empty();
-        	//$(".modal-footer").empty();
         	$.ajax({
         		url:"export.ajax",
         		type:"post",
@@ -276,8 +285,7 @@
         			if(msg == "true"){
         				$('#exportModal').modal('hide');
         				$('#successModal').modal('show');
-        				//$("#importarea").empty();
-        				//$("#messages").empty();
+
         			} else{
        
         				$('#exportModal').modal('hide');
