@@ -1,18 +1,14 @@
 package com.devmg.app;
 
-import java.nio.ByteBuffer;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
-import javax.websocket.PongMessage;
 import javax.websocket.RemoteEndpoint.Async;
-import javax.websocket.RemoteEndpoint.Basic;
 import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -20,8 +16,7 @@ import javax.websocket.server.ServerEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+
 
 @Controller
 
@@ -70,6 +65,7 @@ public class WebSocketChat {
         	
         	String senderRoom = (String) self.getUserProperties().get("roomname");
         	System.out.println("senderRoom : " + senderRoom);
+        	
         	//세션 리스트에 담긴 세션 정보를 비교해 자신을 제외한 다른 모든 사용자에게 메시지 전송
             for(Session session : WebSocketChat.sessionList) {
                 if(!self.getId().equals(session.getId()) && session.getUserProperties().get("roomname").equals(senderRoom)) {
@@ -101,7 +97,7 @@ public class WebSocketChat {
       	
         	//javax.websocket.RemoteEndpoint 인스턴스의 하위 인터페이스 RemoteEndpoint.Async
         	//웹소켓 메시지를 비동기적으로 보낼 수 있게 해준다
-        	//getAsyncRemote는 해당 세션이 메시지를 받는 지점을 리턴한다
+        	//getAsyncRemote는 해당 세션의 RemoteEndpoint, 연결의 반대편 끝(클라이언트)를 리턴한다
         	//final Async async = session.getAsyncRemote();
         	//async.sendText(sender + " : "+message);
         	

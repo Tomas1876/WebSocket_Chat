@@ -28,7 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ChattingController {
 	
-	private String filepath = "c:/web/Spring/SpringLabs/SimpleChat_Oracle/src/files/";
+	//private String filepath = "c:/web/Spring/SpringLabs/SimpleChat_Oracle/src/files/";
+	private String filepath = "c:/Temp/files/";
 	
 	@RequestMapping(value="export.ajax", method=RequestMethod.POST)
 	public String export(String id, String[] marray) {
@@ -55,6 +56,7 @@ public class ChattingController {
 				bs.flush();
 			} catch (Exception e) {
 		            System.out.println("오류 : " +e.getMessage());
+		            bo  = "false";
 			}finally {
 				
 				try {

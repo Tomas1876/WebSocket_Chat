@@ -282,6 +282,7 @@
         		traditional:true,
         		success:function(result){
         			let msg = result.trim();
+        			console.log("msg : ",msg)
         			if(msg == "true"){
         				$('#exportModal').modal('hide');
         				$('#successModal').modal('show');
