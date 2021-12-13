@@ -4,6 +4,7 @@ package com.devmg.app;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -13,16 +14,20 @@ import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+
 
 
 @Controller
 
 //이 어노테이션을 설정하면 이 클래스가 웹소켓 요청을 받는 endpoint가 된다
 //이제 /echo.do 라는 URI로 웹소켓에 접근할 수 있다
-@ServerEndpoint(value="/echo.do/{roomname}")
+@ServerEndpoint(value="/enter.do/{roomname}")
 public class WebSocketChat {
     
     private static final List<Session> sessionList = new ArrayList<Session>();
@@ -83,12 +88,15 @@ public class WebSocketChat {
     
     // 웹소켓으로 메시지가 오면 호출되는 함수
     @OnMessage
-    public void onMessage(Session session, String message, @PathParam("roomname")String roomname) {
+    public void onMessage(Session session, String message, @PathParam("roomname")String roomname) throws ParseException {
     	
     	// 클라이언트가 ws.send(data)로 보낸 데이터를 수신한다
     	//String message = document.getElementById("messageinput").value+","+document.getElementById("sender").value;
-    	String sender = message.split(",")[1];
-    	message = message.split(",")[0];
+    	JSONParser jsonParser = new JSONParser();
+    	System.out.println("ㄹㄹㄹㄹ" + message);
+        JSONObject data = (JSONObject) jsonParser.parse(message);
+    	String sender = (String) data.get("sender");
+    	message = (String) data.get("message");
     	
         logger.info("Message From "+sender + ": "+message);
         

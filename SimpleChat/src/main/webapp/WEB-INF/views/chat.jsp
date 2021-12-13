@@ -152,7 +152,7 @@
             //웹소켓 객체 만드는 코드
             //localhost 앞의 ws는 웹소켓을 호출할 때 쓰는 특수 프로토콜
             //서버로 요청 보내는 프로토콜
-           	ws = new WebSocket("ws://localhost:8090/echo.do/${roomname}");            
+           	ws = new WebSocket("ws://localhost:8070/enter.do/${roomname}");            
            	//echo.do 주소로 요청이 들어가면
            	//echo.do를 @ServerEndpoint(value="/echo.do")
            	//어노테이션이 붙은 WebSocketChat이 이 요청을 잡고
@@ -194,10 +194,10 @@
         
         function send(){
 
-            var text = document.getElementById("messageinput").value+","+document.getElementById("sender").value;
-            
+            //var data = document.getElementById("messageinput").value+","+document.getElementById("sender").value;
+            var data = '{ \"message\" : ' + document.getElementById("messageinput").value+ ', \"sender\" : ' + document.getElementById("sender").value + '}'
             //send는 웹소켓 객체가 제공하는 메서드로 서버로 데이터를 전송할 수 있다
-            ws.send(text);
+            ws.send(data);
             $("#messageinput").val("");
         }
         
@@ -212,6 +212,9 @@
             marray.push(text + space);
         }
 
+        
+        
+        
         function clearText(){
 
             $("#messages").empty();

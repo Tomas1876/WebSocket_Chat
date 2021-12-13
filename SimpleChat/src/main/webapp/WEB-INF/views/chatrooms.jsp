@@ -210,6 +210,7 @@
     }
     
     function enterRoom(room){
+
     	let roomname = room.innerText;
     	console.log(roomname);
     	console.log("대화방 입장");
